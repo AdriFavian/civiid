@@ -21,15 +21,18 @@ class _LoginpageState extends State<Loginpage> {
 
   @override
   Widget build(BuildContext context) {
+    // TheFinalLayout iku template layout dan harus wajib gae iku
     return TheFinalLayout(
       title: "Selamat Datang",
       subtitle:
           "Silahkan Logun untuk mendapakan QR. Jika belum ada akun klik registrasi",
       children: [
+        // TextFieldWithLabelWidget iku gae TextField ambek Label wajib juga dan JANGAN PAKE TextFormField
         TextFieldWithLabelWidget(label: "Email"),
         SizedBox(height: 10),
         TextFieldWithLabelWidget(label: "Password"),
         SizedBox(height: 10),
+        // TheBestButtonWidget iku gae ElevatedButton JANGAN GAE ElevatedButton Bawaan
         TheBestButtonWidget(
           color: Colors.black,
           label: "Login",

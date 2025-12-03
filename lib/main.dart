@@ -10,6 +10,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ke Layout/loginPage.dart kalau mau edit
+    // Design ne delok en ning group.
     return MaterialApp(home: Loginpage());
   }
 }

@@ -24,6 +24,7 @@ class _RegisterPage1State extends State<RegisterPage1> {
     return TheFinalLayout(
       title: "Registrasi",
       subtitle: "Halaman 1 dari 4",
+      // startindex dan endindex iku gae progress indicator
       startindex: 1,
       endindex: 4,
       children: [
