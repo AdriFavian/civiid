@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class PredictService {
-  final String apiUrl = 'http://192.168.1.14:5000/predict';
+  final String apiUrl = 'https://knoyan-api-civiid.hf.space/predict';
 
   Future<Map<String, dynamic>> predictGender(File image) async {
     try {

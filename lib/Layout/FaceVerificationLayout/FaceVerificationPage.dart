@@ -33,7 +33,7 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
       if (_cameras != null && _cameras!.isNotEmpty) {
         // Gunakan kamera depan jika tersedia
         CameraDescription selectedCamera = _cameras!.firstWhere(
-          (camera) => camera.lensDirection == CameraLensDirection.front,
+          (camera) => camera.lensDirection == CameraLensDirection.back,
           orElse: () => _cameras!.first,
         );
 
