@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:civiid/services/predictservices.dart';
+import 'package:civiid/widget/AlertPopup.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
@@ -106,15 +107,29 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
     final predictedGender = result['gender'];
     final predictionScore = result['score'];
 
-    // Navigasi ke halaman hasil dengan membawa data
-    if (mounted) {
+    if (!mounted) return;
+
+    if (result['error'] != null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertPopup(
+          title: "Error",
+          message: result['error'],
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      );
+    } else {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => VerificationResultPage(
             capturedImage: image,
             predictedGender: predictedGender ?? "",
-            predictionScore: predictionScore ?? 0,
+            predictionScore: (predictionScore is num)
+                ? predictionScore.toDouble()
+                : 0.0,
           ),
         ),
       );
