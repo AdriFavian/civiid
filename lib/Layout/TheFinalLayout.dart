@@ -5,6 +5,7 @@ class TheFinalLayout extends StatefulWidget {
   final String title;
   final String subtitle;
   final Color titleColor;
+  final Color progressColor;
   final int? startindex;
   final int? endindex;
   const TheFinalLayout({
@@ -12,7 +13,8 @@ class TheFinalLayout extends StatefulWidget {
     required this.children,
     this.title = "title",
     this.subtitle = "subtitle",
-    this.titleColor = Colors.black,
+    this.titleColor = const Color.fromARGB(255, 56, 92, 221),
+    this.progressColor = const Color.fromARGB(255, 56, 92, 221),
     this.startindex,
     this.endindex,
   });
@@ -45,12 +47,14 @@ class _TheFinalLayoutState extends State<TheFinalLayout> {
                 widget.subtitle,
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
               ),
-
+              SizedBox(height: 20),
               if (widget.startindex != null && widget.endindex != null)
                 LinearProgressIndicator(
+                  borderRadius: BorderRadius.circular(10),
+                  minHeight: 20,
                   value: widget.startindex! / widget.endindex!,
-                  backgroundColor: Colors.grey,
-                  color: Colors.black,
+                  backgroundColor: Colors.black12,
+                  color: widget.progressColor,
                 ),
               SizedBox(height: 20),
               ...widget.children,

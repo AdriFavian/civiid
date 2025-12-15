@@ -29,9 +29,9 @@ class _LoginpageState extends State<Loginpage> {
           "Silahkan Login untuk mendapatkan QR. Jika belum ada akun klik registrasi",
       children: [
         // TextFieldWithLabelWidget iku gae TextField ambek Label wajib juga dan JANGAN PAKE TextFormField
-        TextFieldWithLabelWidget(label: "Email"),
+        TextFieldWithLabelWidget(label: "Email", type: TypeField.email),
         SizedBox(height: 15),
-        TextFieldWithLabelWidget(label: "Password"),
+        TextFieldWithLabelWidget(label: "Password", type: TypeField.password),
         SizedBox(height: 34),
         // TheBestButtonWidget iku gae ElevatedButton JANGAN GAE ElevatedButton Bawaan
         TheBestButtonWidget(

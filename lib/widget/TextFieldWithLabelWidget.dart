@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 
+enum TypeField { text, password, email, date, number, phone }
+
 class TextFieldWithLabelWidget extends StatefulWidget {
   final String label;
-  const TextFieldWithLabelWidget({super.key, this.label = ""});
+  final TextEditingController? controller;
+  final TypeField type;
+
+  const TextFieldWithLabelWidget({
+    super.key,
+    this.label = "",
+    this.controller,
+    this.type = TypeField.text,
+  });
 
   @override
   State<TextFieldWithLabelWidget> createState() =>
@@ -10,8 +20,60 @@ class TextFieldWithLabelWidget extends StatefulWidget {
 }
 
 class _TextFieldWithLabelWidgetState extends State<TextFieldWithLabelWidget> {
+  bool _obscureText = true;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && widget.controller != null) {
+      // Format: dd-MM-yyyy
+      widget.controller!.text =
+          "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year}";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    TextInputType keyboardType = TextInputType.text;
+    bool obscure = false;
+    bool readOnly = false;
+    Widget? suffixIcon;
+    VoidCallback? onTap;
+
+    switch (widget.type) {
+      case TypeField.email:
+        keyboardType = TextInputType.emailAddress;
+        break;
+      case TypeField.phone:
+        keyboardType = TextInputType.phone;
+        break;
+      case TypeField.number:
+        keyboardType = TextInputType.number;
+        break;
+      case TypeField.password:
+        obscure = _obscureText;
+        suffixIcon = IconButton(
+          icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        );
+        break;
+      case TypeField.date:
+        readOnly = true;
+        suffixIcon = const Icon(Icons.calendar_today);
+        onTap = () => _selectDate(context);
+        break;
+      default:
+        break;
+    }
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -19,9 +81,30 @@ class _TextFieldWithLabelWidgetState extends State<TextFieldWithLabelWidget> {
         Text(widget.label),
         SizedBox(height: 5),
         TextFormField(
+          controller: widget.controller,
+          keyboardType: keyboardType,
+          obscureText: obscure,
+          readOnly: readOnly,
+          onTap: onTap,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (value) {
+            if (widget.type == TypeField.email) {
+              if (value == null || value.isEmpty) {
+                return 'Email tidak boleh kosong';
+              }
+              final emailRegex = RegExp(
+                r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+',
+              );
+              if (!emailRegex.hasMatch(value)) {
+                return 'Format email tidak valid';
+              }
+            }
+            return null;
+          },
           decoration: InputDecoration(
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
             label: Text(widget.label),
+            suffixIcon: suffixIcon,
           ),
         ),
       ],

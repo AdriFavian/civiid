@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:civiid/Layout/RegisterLayout/RegisterPage4.dart';
 import 'package:civiid/services/predictservices.dart';
+import 'package:civiid/services/shared.dart';
 import 'package:civiid/widget/AlertPopup.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -8,7 +10,8 @@ import 'package:civiid/Layout/FaceVerificationLayout/VerificationResultPage.dart
 import 'package:civiid/widget/TheBestButtonWidget.dart';
 
 class FaceVerificationPage extends StatefulWidget {
-  const FaceVerificationPage({super.key});
+  final bool debugMode;
+  const FaceVerificationPage({super.key, required this.debugMode});
 
   @override
   State<FaceVerificationPage> createState() => _FaceVerificationPageState();
@@ -105,6 +108,7 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
     final predictService = PredictService();
     final result = await predictService.predictGender(image);
     final predictedGender = result['gender'];
+    String predictedGenderReal = "";
     final predictionScore = result['score'];
 
     if (!mounted) return;
@@ -121,18 +125,37 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
         ),
       );
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VerificationResultPage(
-            capturedImage: image,
-            predictedGender: predictedGender ?? "",
-            predictionScore: (predictionScore is num)
-                ? predictionScore.toDouble()
-                : 0.0,
+      // Save image path to SharedPreferences
+      await SharedPrefService().saveRegisterData(imagePath: image.path);
+
+      if (widget.debugMode == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VerificationResultPage(
+              capturedImage: image,
+              predictedGender: predictedGender ?? "",
+              predictionScore: (predictionScore is num)
+                  ? predictionScore.toDouble()
+                  : 0.0,
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        if (predictedGender == 'MALE') {
+          predictedGenderReal = "Laki-laki";
+        } else {
+          predictedGenderReal = "Perempuan";
+        }
+        await SharedPrefService().saveRegisterData(
+          imagePath: image.path,
+          jenisKelamin: predictedGenderReal,
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Registerpage4()),
+        );
+      }
     }
   }
 
