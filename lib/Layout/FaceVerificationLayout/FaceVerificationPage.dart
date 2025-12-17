@@ -126,7 +126,7 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
       );
     } else {
       // Save image path to SharedPreferences
-      await SharedPrefService().saveRegisterData(imagePath: image.path);
+      await SharedPrefServiceRegister().saveRegisterData(imagePath: image.path);
 
       if (widget.debugMode == true) {
         Navigator.push(
@@ -147,7 +147,7 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
         } else {
           predictedGenderReal = "Perempuan";
         }
-        await SharedPrefService().saveRegisterData(
+        await SharedPrefServiceRegister().saveRegisterData(
           imagePath: image.path,
           jenisKelamin: predictedGenderReal,
         );

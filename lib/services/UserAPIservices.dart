@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:civiid/services/shared.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
-final api_http = 'http://192.168.1.6:8080/api/v1/user/';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+final api_http = dotenv.env['API_URL']! + 'user/';
 
 class TestApi {
   Future<bool> testApi() async {
@@ -50,35 +53,27 @@ class RegisterApi {
       request.fields['phone_number'] = phoneNumber.toString();
       request.fields['status'] = status;
 
-      print("Trying to upload image from path: '${image.path}'");
       if (await image.exists()) {
-        print("Image exists. Adding to request...");
         try {
           request.files.add(
             await MultipartFile.fromPath('photo_file', image.path),
           );
-          print("Image added successfully.");
         } catch (fileError) {
-          print("Error adding file: $fileError");
           return {'error': 'Error reading image file: $fileError'};
         }
-      } else {
-        print(
-          "Image does not exist or path is empty. Proceeding without image.",
-        );
-      }
-
-      print("Sending request to ${request.url}");
+      } else {}
       final streamedResponse = await request.send();
-      print("Response status: ${streamedResponse.statusCode}");
       final response = await Response.fromStream(streamedResponse);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return jsonDecode(response.body);
       } else {
         try {
-          print(response.body);
-          return jsonDecode(response.body);
+          final data = jsonDecode(response.body);
+          if (data['message'] != null) {
+            data['error'] = data['message'];
+          }
+          return data;
         } catch (e) {
           return {
             'error': 'Failed to register. Status: ${response.statusCode}',
@@ -91,20 +86,45 @@ class RegisterApi {
   }
 }
 
-class LoginAPI {
+class LoginUserAPI {
   Future<Map<String, dynamic>> loginApi(int nik, String password) async {
     try {
-      final response = await post(
-        Uri.parse(api_http + 'login'),
-        body: {'nik': nik, 'password': password},
-      );
+      var request = MultipartRequest('POST', Uri.parse(api_http + 'login'));
+      request.fields['nik'] = nik.toString();
+      request.fields['password'] = password;
+      final streamedResponse = await request.send();
+      final response = await Response.fromStream(streamedResponse);
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final data = jsonDecode(response.body);
+        SharedPrefServiceLogin().saveLoginData(
+          token: data['data']['access_token'],
+        );
+        return data;
       } else {
         return {'error': 'Failed to login'};
       }
     } catch (e) {
       return {'error': e.toString()};
+    }
+  }
+}
+
+class QRCodeAPI {
+  Future<String> getQRCode(String token) async {
+    try {
+      var request = MultipartRequest('GET', Uri.parse(api_http + 'qr'));
+      request.headers['Authorization'] = 'Bearer $token';
+      final streamedResponse = await request.send();
+      final response = await Response.fromStream(streamedResponse);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        String url = data['data']['qr_url'];
+        return url;
+      } else {
+        return 'Failed to get QR code';
+      }
+    } catch (e) {
+      return e.toString();
     }
   }
 }

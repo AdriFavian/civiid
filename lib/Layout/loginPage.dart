@@ -1,5 +1,10 @@
 import 'package:civiid/Layout/TheFinalLayout.dart';
 import 'package:civiid/Layout/RegisterLayout/RegisterPage1.dart';
+import 'package:civiid/Layout/adminScanQR.dart';
+import 'package:civiid/Layout/userGetQR.dart';
+import 'package:civiid/services/AdminAPIservices.dart';
+import 'package:civiid/services/UserAPIservices.dart';
+import 'package:civiid/services/shared.dart';
 import 'package:civiid/widget/TextFieldWithLabelWidget.dart';
 import 'package:civiid/widget/TheBestButtonWidget.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +17,76 @@ class Loginpage extends StatefulWidget {
 }
 
 class _LoginpageState extends State<Loginpage> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _nikController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool petugas = false;
+  var result;
+
   void navigateToRegister() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => RegisterPage1()),
     );
+  }
+
+  void _login() async {
+    if (_formKey.currentState!.validate()) {
+      if (petugas == false) {
+        final result = await LoginUserAPI().loginApi(
+          int.parse(_nikController.text),
+          _passwordController.text,
+        );
+        if (result.containsKey('error')) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(result['error'])));
+        } else {
+          try {
+            await SharedPrefServiceLogin().saveLoginData(
+              token: result['data']['access_token'],
+              petugas: petugas,
+            );
+          } catch (e) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(e.toString())));
+          }
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const Usergetqr()),
+            (route) => false,
+          );
+        }
+      } else {
+        final result = await LoginAdminAPI().loginApi(
+          _emailController.text,
+          _passwordController.text,
+        );
+        if (result.containsKey('error')) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(result['error'])));
+        } else {
+          try {
+            await SharedPrefServiceLogin().saveLoginData(
+              token: result['data']['access_token'],
+              petugas: petugas,
+            );
+          } catch (e) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(e.toString())));
+          }
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminScanQR()),
+            (route) => false,
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -28,24 +98,69 @@ class _LoginpageState extends State<Loginpage> {
       subtitle:
           "Silahkan Login untuk mendapatkan QR. Jika belum ada akun klik registrasi",
       children: [
-        // TextFieldWithLabelWidget iku gae TextField ambek Label wajib juga dan JANGAN PAKE TextFormField
-        TextFieldWithLabelWidget(label: "Email", type: TypeField.email),
-        SizedBox(height: 15),
-        TextFieldWithLabelWidget(label: "Password", type: TypeField.password),
-        SizedBox(height: 34),
-        // TheBestButtonWidget iku gae ElevatedButton JANGAN GAE ElevatedButton Bawaan
-        TheBestButtonWidget(
-          color: const Color.fromARGB(255, 56, 92, 221),
-          label: "Login",
-          onPressed: () {},
-          colorText: Colors.white,
-        ),
-        SizedBox(height: 10),
-        TheBestButtonWidget(
-          color: Colors.white,
-          label: "Registrasi",
-          onPressed: navigateToRegister,
-          colorText: Colors.black,
+        Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              if (petugas == false)
+                TextFieldWithLabelWidget(
+                  label: "NIK",
+                  type: TypeField.number,
+                  required: true,
+                  controller: _nikController,
+                )
+              else
+                TextFieldWithLabelWidget(
+                  label: "Email",
+                  type: TypeField.email,
+                  required: true,
+                  controller: _emailController,
+                ),
+              SizedBox(height: 15),
+              TextFieldWithLabelWidget(
+                label: "Password",
+                type: TypeField.password,
+                required: true,
+                controller: _passwordController,
+              ),
+              SizedBox(height: 34),
+              // TheBestButtonWidget iku gae ElevatedButton JANGAN GAE ElevatedButton Bawaan
+              TheBestButtonWidget(
+                color: const Color.fromARGB(255, 56, 92, 221),
+                label: "Login",
+                onPressed: _login,
+                colorText: Colors.white,
+              ),
+              SizedBox(height: 10),
+              TheBestButtonWidget(
+                color: Colors.white,
+                label: "Registrasi",
+                onPressed: navigateToRegister,
+                colorText: Colors.black,
+              ),
+              SizedBox(height: 10),
+              Row(
+                children: <Widget>[
+                  Expanded(child: Divider()),
+
+                  Text("Atau", style: TextStyle(color: Colors.black)),
+
+                  Expanded(child: Divider()),
+                ],
+              ),
+              SizedBox(height: 10),
+              TheBestButtonWidget(
+                color: Colors.white,
+                label: petugas ? "Login sebagai user" : "Login sebagai petugas",
+                onPressed: () {
+                  setState(() {
+                    petugas = !petugas;
+                  });
+                },
+                colorText: Colors.black,
+              ),
+            ],
+          ),
         ),
       ],
     );

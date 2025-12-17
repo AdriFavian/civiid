@@ -6,12 +6,14 @@ class TextFieldWithLabelWidget extends StatefulWidget {
   final String label;
   final TextEditingController? controller;
   final TypeField type;
+  final bool required;
 
   const TextFieldWithLabelWidget({
     super.key,
     this.label = "",
     this.controller,
     this.type = TypeField.text,
+    this.required = false,
   });
 
   @override
@@ -88,15 +90,18 @@ class _TextFieldWithLabelWidgetState extends State<TextFieldWithLabelWidget> {
           onTap: onTap,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) {
+            if (widget.required && (value == null || value.isEmpty)) {
+              return '${widget.label} tidak boleh kosong';
+            }
             if (widget.type == TypeField.email) {
-              if (value == null || value.isEmpty) {
-                return 'Email tidak boleh kosong';
-              }
-              final emailRegex = RegExp(
-                r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+',
-              );
-              if (!emailRegex.hasMatch(value)) {
-                return 'Format email tidak valid';
+              // Email regex check (if value is not empty)
+              if (value != null && value.isNotEmpty) {
+                final emailRegex = RegExp(
+                  r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+',
+                );
+                if (!emailRegex.hasMatch(value)) {
+                  return 'Format email tidak valid';
+                }
               }
             }
             return null;

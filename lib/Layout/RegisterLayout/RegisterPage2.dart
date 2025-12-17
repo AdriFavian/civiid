@@ -17,24 +17,27 @@ class _Registerpage2State extends State<Registerpage2> {
   final TextEditingController _statusPerkawinanController =
       TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> _nextPage() async {
-    await SharedPrefService().saveRegisterData(
-      agama: _agamaController.text,
-      statusPerkawinan: _statusPerkawinanController.text,
-      // We don't have a specific key for phone in shared.dart yet.
-      // I need to add it to shared.dart first or use an existing one?
-      // Wait, I missed adding phone to shared.dart in step 3.
-      phone: _phoneController.text,
-    );
-
-    if (mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const FaceVerificationPage(debugMode: false),
-        ),
+    if (_formKey.currentState!.validate()) {
+      await SharedPrefServiceRegister().saveRegisterData(
+        agama: _agamaController.text,
+        statusPerkawinan: _statusPerkawinanController.text,
+        // We don't have a specific key for phone in shared.dart yet.
+        // I need to add it to shared.dart first or use an existing one?
+        // Wait, I missed adding phone to shared.dart in step 3.
+        phone: _phoneController.text,
       );
+
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const FaceVerificationPage(debugMode: false),
+          ),
+        );
+      }
     }
   }
 
@@ -53,24 +56,37 @@ class _Registerpage2State extends State<Registerpage2> {
       startindex: 2,
       endindex: 4,
       children: [
-        TextFieldWithLabelWidget(label: "Agama", controller: _agamaController),
-        SizedBox(height: 15),
-        TextFieldWithLabelWidget(
-          label: "Status Perkawinan",
-          controller: _statusPerkawinanController,
-        ),
-        SizedBox(height: 15),
-        TextFieldWithLabelWidget(
-          label: "No Handphone",
-          controller: _phoneController,
-          type: TypeField.phone,
-        ),
-        SizedBox(height: 30),
-        TheBestButtonWidget(
-          color: const Color.fromARGB(255, 56, 92, 221),
-          colorText: Colors.white,
-          label: "Lanjut ke Verifikasi Wajah",
-          onPressed: _nextPage,
+        Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFieldWithLabelWidget(
+                label: "Agama",
+                controller: _agamaController,
+                required: true,
+              ),
+              SizedBox(height: 15),
+              TextFieldWithLabelWidget(
+                label: "Status Perkawinan",
+                controller: _statusPerkawinanController,
+                required: true,
+              ),
+              SizedBox(height: 15),
+              TextFieldWithLabelWidget(
+                label: "No Handphone",
+                controller: _phoneController,
+                type: TypeField.phone,
+                required: true,
+              ),
+              SizedBox(height: 30),
+              TheBestButtonWidget(
+                color: const Color.fromARGB(255, 56, 92, 221),
+                colorText: Colors.white,
+                label: "Lanjut ke Verifikasi Wajah",
+                onPressed: _nextPage,
+              ),
+            ],
+          ),
         ),
       ],
     );

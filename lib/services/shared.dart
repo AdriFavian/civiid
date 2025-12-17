@@ -1,6 +1,8 @@
+import 'package:civiid/Layout/data/login_info.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SharedPrefService {
+class SharedPrefServiceRegister {
   static const String keyNik = 'register_nik';
   static const String keyName = 'register_name';
   static const String keyTempatLahir = 'register_tempat_lahir';
@@ -78,5 +80,37 @@ class SharedPrefService {
     await prefs.remove(keyEmail);
     await prefs.remove(keyPassword);
     await prefs.remove(keyPhone);
+  }
+}
+
+class SharedPrefServiceLogin extends ChangeNotifier {
+  Future<LoginInfo> checkLogin() async {
+    LoginInfo loginInfo = await LoginInfo.getFromSharedPreference();
+    return loginInfo;
+  }
+
+  Future<void> saveLoginData({String? token, bool? petugas}) async {
+    LoginInfo loginInfo = await LoginInfo.getFromSharedPreference();
+    loginInfo.isLoggedIn = true;
+    if (petugas != null) {
+      loginInfo.petugas = petugas;
+    }
+    if (token != null) {
+      loginInfo.authToken = token;
+    }
+    await loginInfo.saveToSharedPreference();
+  }
+
+  Future<void> clearLoginData() async {
+    LoginInfo loginInfo = await LoginInfo.getFromSharedPreference();
+    loginInfo.isLoggedIn = false;
+    loginInfo.authToken = '';
+    loginInfo.petugas = false;
+    await loginInfo.saveToSharedPreference();
+  }
+
+  Future<String> getLoginData() async {
+    LoginInfo loginInfo = await LoginInfo.getFromSharedPreference();
+    return loginInfo.authToken;
   }
 }

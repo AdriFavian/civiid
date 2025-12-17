@@ -3,13 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class PredictService {
-  final String apiUrl = 'https://knoyan-api-civiid.hf.space/predict';
+  final apiUrl = dotenv.env['API_PREDICT_URL'];
 
   Future<Map<String, dynamic>> predictGender(File image) async {
     try {
-      final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+      final request = http.MultipartRequest('POST', Uri.parse(apiUrl!));
       final file = await http.MultipartFile.fromPath('file', image.path);
       request.files.add(file);
 

@@ -29,7 +29,12 @@ class _Registerpage4State extends State<Registerpage4> {
     super.dispose();
   }
 
+  final _formKey = GlobalKey<FormState>();
+
   Future<void> _register() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -40,7 +45,8 @@ class _Registerpage4State extends State<Registerpage4> {
     }
 
     try {
-      final sharedPref = SharedPrefService();
+      final sharedPref = SharedPrefServiceRegister();
+      // ... remainder of logic ...
       // Save current page data
       await sharedPref.saveRegisterData(
         email: _emailController.text,
@@ -165,29 +171,39 @@ class _Registerpage4State extends State<Registerpage4> {
       startindex: 4,
       endindex: 4,
       children: [
-        TextFieldWithLabelWidget(
-          label: 'Email',
-          controller: _emailController,
-          type: TypeField.email,
-        ),
-        SizedBox(height: 15),
-        TextFieldWithLabelWidget(
-          label: 'Password',
-          controller: _passwordController,
-          type: TypeField.password,
-        ),
-        SizedBox(height: 15),
-        TextFieldWithLabelWidget(
-          label: 'Konfirmasi Password',
-          controller: _confirmPasswordController,
-          type: TypeField.password,
-        ),
-        SizedBox(height: 30),
-        TheBestButtonWidget(
-          color: const Color.fromARGB(255, 56, 92, 221),
-          colorText: Colors.white,
-          label: "Daftar",
-          onPressed: _register,
+        Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFieldWithLabelWidget(
+                label: 'Email',
+                controller: _emailController,
+                type: TypeField.email,
+                required: true,
+              ),
+              SizedBox(height: 15),
+              TextFieldWithLabelWidget(
+                label: 'Password',
+                controller: _passwordController,
+                type: TypeField.password,
+                required: true,
+              ),
+              SizedBox(height: 15),
+              TextFieldWithLabelWidget(
+                label: 'Konfirmasi Password',
+                controller: _confirmPasswordController,
+                type: TypeField.password,
+                required: true,
+              ),
+              SizedBox(height: 30),
+              TheBestButtonWidget(
+                color: const Color.fromARGB(255, 56, 92, 221),
+                colorText: Colors.white,
+                label: "Daftar",
+                onPressed: _register,
+              ),
+            ],
+          ),
         ),
       ],
     );

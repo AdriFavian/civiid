@@ -19,20 +19,24 @@ class _RegisterPage1State extends State<RegisterPage1> {
   final TextEditingController _tanggalLahirController = TextEditingController();
   final TextEditingController _alamatController = TextEditingController();
 
-  Future<void> _nextpage2() async {
-    await SharedPrefService().saveRegisterData(
-      nik: _nikController.text,
-      name: _nameController.text,
-      tempatLahir: _tempatLahirController.text,
-      tanggalLahir: _tanggalLahirController.text,
-      alamat: _alamatController.text,
-    );
+  final _formKey = GlobalKey<FormState>();
 
-    if (mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Registerpage2()),
+  Future<void> _nextpage2() async {
+    if (_formKey.currentState!.validate()) {
+      await SharedPrefServiceRegister().saveRegisterData(
+        nik: _nikController.text,
+        name: _nameController.text,
+        tempatLahir: _tempatLahirController.text,
+        tanggalLahir: _tanggalLahirController.text,
+        alamat: _alamatController.text,
       );
+
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Registerpage2()),
+        );
+      }
     }
   }
 
@@ -55,35 +59,50 @@ class _RegisterPage1State extends State<RegisterPage1> {
       startindex: 1,
       endindex: 4,
       children: [
-        TextFieldWithLabelWidget(
-          label: "NIK",
-          controller: _nikController,
-          type: TypeField.number,
-        ),
-        SizedBox(height: 15),
-        TextFieldWithLabelWidget(label: "Nama", controller: _nameController),
-        SizedBox(height: 15),
-        TextFieldWithLabelWidget(
-          label: "Tempat Lahir",
-          controller: _tempatLahirController,
-        ),
-        SizedBox(height: 15),
-        TextFieldWithLabelWidget(
-          label: "Tanggal Lahir",
-          controller: _tanggalLahirController,
-          type: TypeField.date,
-        ),
-        SizedBox(height: 15),
-        TextFieldWithLabelWidget(
-          label: "Alamat",
-          controller: _alamatController,
-        ),
-        SizedBox(height: 30),
-        TheBestButtonWidget(
-          color: const Color.fromARGB(255, 56, 92, 221),
-          colorText: Colors.white,
-          label: "Lanjut",
-          onPressed: _nextpage2,
+        Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFieldWithLabelWidget(
+                label: "NIK",
+                controller: _nikController,
+                type: TypeField.number,
+                required: true,
+              ),
+              SizedBox(height: 15),
+              TextFieldWithLabelWidget(
+                label: "Nama",
+                controller: _nameController,
+                required: true,
+              ),
+              SizedBox(height: 15),
+              TextFieldWithLabelWidget(
+                label: "Tempat Lahir",
+                controller: _tempatLahirController,
+                required: true,
+              ),
+              SizedBox(height: 15),
+              TextFieldWithLabelWidget(
+                label: "Tanggal Lahir",
+                controller: _tanggalLahirController,
+                type: TypeField.date,
+                required: true,
+              ),
+              SizedBox(height: 15),
+              TextFieldWithLabelWidget(
+                label: "Alamat",
+                controller: _alamatController,
+                required: true,
+              ),
+              SizedBox(height: 30),
+              TheBestButtonWidget(
+                color: const Color.fromARGB(255, 56, 92, 221),
+                colorText: Colors.white,
+                label: "Lanjut",
+                onPressed: _nextpage2,
+              ),
+            ],
+          ),
         ),
       ],
     );
