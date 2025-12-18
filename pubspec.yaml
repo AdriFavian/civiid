@@ -16,6 +16,7 @@ dependencies:
   flutter_dotenv: ^5.1.0
   http: ^1.2.0
   mobile_scanner: ^7.1.4
+  screen_brightness: ^0.2.2
   intl: ^0.20.2
 
 dev_dependencies:

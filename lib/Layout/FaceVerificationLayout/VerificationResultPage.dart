@@ -51,10 +51,7 @@ class VerificationResultPage extends StatelessWidget {
                 height: 250,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.grey.shade300,
-                    width: 2,
-                  ),
+                  border: Border.all(color: Colors.grey.shade300, width: 2),
                 ),
                 child: ClipOval(
                   child: Image.file(
@@ -94,10 +91,7 @@ class VerificationResultPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.grey.shade50,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.grey.shade200,
-                    width: 1,
-                  ),
+                  border: Border.all(color: Colors.grey.shade200, width: 1),
                 ),
                 child: Column(
                   children: [
@@ -122,11 +116,12 @@ class VerificationResultPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 15),
-                    const Divider(height: 1),
-                    const SizedBox(height: 15),
+
                     // Score Prediksi
-                    if (predictionScore != null)
+                    if (predictionScore > 0) ...[
+                      const SizedBox(height: 15),
+                      const Divider(height: 1),
+                      const SizedBox(height: 15),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -138,7 +133,9 @@ class VerificationResultPage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            predictionScore.toStringAsFixed(5).replaceAll('.', ','),
+                            predictionScore
+                                .toStringAsFixed(5)
+                                .replaceAll('.', ','),
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -147,6 +144,7 @@ class VerificationResultPage extends StatelessWidget {
                           ),
                         ],
                       ),
+                    ],
                   ],
                 ),
               ),
@@ -161,7 +159,7 @@ class VerificationResultPage extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 10),
               if (debugMode == false)
                 TheBestButtonWidget(
                   color: const Color.fromARGB(255, 56, 92, 221),
@@ -170,9 +168,7 @@ class VerificationResultPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => Registerpage4(),
-                        ),
+                      MaterialPageRoute(builder: (context) => Registerpage4()),
                     );
                   },
                 ),

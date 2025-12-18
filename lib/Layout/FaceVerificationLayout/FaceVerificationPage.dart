@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:civiid/Layout/RegisterLayout/RegisterPage4.dart';
+
 import 'package:civiid/services/predictservices.dart';
 import 'package:civiid/services/shared.dart';
 import 'package:civiid/widget/AlertPopup.dart';
@@ -8,6 +8,7 @@ import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:civiid/Layout/FaceVerificationLayout/VerificationResultPage.dart';
 import 'package:civiid/widget/TheBestButtonWidget.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 
 class FaceVerificationPage extends StatefulWidget {
   final bool debugMode;
@@ -37,7 +38,7 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
       if (_cameras != null && _cameras!.isNotEmpty) {
         // Gunakan kamera depan jika tersedia
         CameraDescription selectedCamera = _cameras!.firstWhere(
-          (camera) => camera.lensDirection == CameraLensDirection.back,
+          (camera) => camera.lensDirection == CameraLensDirection.front,
           orElse: () => _cameras!.first,
         );
 
@@ -69,6 +70,15 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
     setState(() {
       _isLoading = true;
     });
+
+    try {
+      await ScreenBrightness().setScreenBrightness(1.0);
+    } catch (e) {
+      debugPrint('Error setting screen brightness: $e');
+    }
+
+    await Future.delayed(const Duration(seconds: 3));
+
     if (_cameraController == null || !_cameraController!.value.isInitialized) {
       return;
     }
@@ -133,10 +143,16 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
         ),
       );
     } else {
-      // Save image path to SharedPreferences
       await SharedPrefServiceRegister().saveRegisterData(imagePath: image.path);
 
+      try {
+        await ScreenBrightness().resetScreenBrightness();
+      } catch (e) {
+        debugPrint('Error resetting screen brightness: $e');
+      }
+
       if (widget.debugMode == true) {
+        if (!mounted) return;
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -159,13 +175,21 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
           imagePath: image.path,
           jenisKelamin: predictedGenderReal,
         );
+        try {
+          await ScreenBrightness().resetScreenBrightness();
+        } catch (e) {
+          debugPrint('Error resetting screen brightness: $e');
+        }
+        if (!mounted) return;
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => VerificationResultPage(
-            capturedImage: image,
-            predictedGender: predictedGender ?? "",
-            debugMode: false,
-          )),
+          MaterialPageRoute(
+            builder: (context) => VerificationResultPage(
+              capturedImage: image,
+              predictedGender: predictedGender ?? "",
+              debugMode: false,
+            ),
+          ),
         );
       }
     }
