@@ -64,47 +64,23 @@ class _Registerpage2State extends State<Registerpage2> {
                 label: "Agama",
                 controller: _agamaController,
                 required: true,
+                type: TypeField.dropdown,
+                dropdownItems: const [
+                  "Islam",
+                  "Kristen Protestan",
+                  "Kristen Katolik",
+                  "Hindu",
+                  "Buddha",
+                  "Konghucu",
+                ],
               ),
               SizedBox(height: 15),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Status Perkawinan"),
-                  SizedBox(height: 5),
-                  DropdownButtonFormField<String>(
-                    value: _statusPerkawinanController.text.isEmpty
-                        ? null
-                        : _statusPerkawinanController.text,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 15,
-                      ),
-                    ),
-                    items: ["Belum Menikah", "Sudah Menikah"]
-                        .map(
-                          (label) => DropdownMenuItem(
-                            value: label,
-                            child: Text(label),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _statusPerkawinanController.text = value!;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Status Perkawinan tidak boleh kosong';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
+              TextFieldWithLabelWidget(
+                label: "Status Perkawinan",
+                controller: _statusPerkawinanController,
+                required: true,
+                type: TypeField.dropdown,
+                dropdownItems: const ["Belum Menikah", "Sudah Menikah"],
               ),
               SizedBox(height: 15),
               TextFieldWithLabelWidget(

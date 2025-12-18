@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum TypeField { text, password, email, date, number, phone }
+enum TypeField { text, password, email, date, number, phone, dropdown }
 
 class TextFieldWithLabelWidget extends StatefulWidget {
   final String label;
@@ -8,6 +8,7 @@ class TextFieldWithLabelWidget extends StatefulWidget {
   final TypeField type;
   final bool required;
   final String? Function(String?)? validator;
+  final List<String>? dropdownItems;
 
   const TextFieldWithLabelWidget({
     super.key,
@@ -16,6 +17,7 @@ class TextFieldWithLabelWidget extends StatefulWidget {
     this.type = TypeField.text,
     this.required = false,
     this.validator,
+    this.dropdownItems,
   });
 
   @override
@@ -84,40 +86,71 @@ class _TextFieldWithLabelWidgetState extends State<TextFieldWithLabelWidget> {
       children: [
         Text(widget.label),
         SizedBox(height: 5),
-        TextFormField(
-          controller: widget.controller,
-          keyboardType: keyboardType,
-          obscureText: obscure,
-          readOnly: readOnly,
-          onTap: onTap,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: (value) {
-            if (widget.required && (value == null || value.isEmpty)) {
-              return '${widget.label} tidak boleh kosong';
-            }
-            if (widget.validator != null) {
-              final result = widget.validator!(value);
-              if (result != null) return result;
-            }
-            if (widget.type == TypeField.email) {
-              // Email regex check (if value is not empty)
-              if (value != null && value.isNotEmpty) {
-                final emailRegex = RegExp(
-                  r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+',
-                );
-                if (!emailRegex.hasMatch(value)) {
-                  return 'Format email tidak valid';
-                }
-              }
-            }
-            return null;
-          },
-          decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-            label: Text(widget.label),
-            suffixIcon: suffixIcon,
-          ),
-        ),
+        widget.type != TypeField.dropdown
+            ? TextFormField(
+                controller: widget.controller,
+                keyboardType: keyboardType,
+                obscureText: obscure,
+                readOnly: readOnly,
+                onTap: onTap,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (widget.required && (value == null || value.isEmpty)) {
+                    return '${widget.label} tidak boleh kosong';
+                  }
+                  if (widget.validator != null) {
+                    final result = widget.validator!(value);
+                    if (result != null) return result;
+                  }
+                  if (widget.type == TypeField.email) {
+                    // Email regex check (if value is not empty)
+                    if (value != null && value.isNotEmpty) {
+                      final emailRegex = RegExp(
+                        r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+',
+                      );
+                      if (!emailRegex.hasMatch(value)) {
+                        return 'Format email tidak valid';
+                      }
+                    }
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  label: Text(widget.label),
+                  suffixIcon: suffixIcon,
+                ),
+              )
+            : DropdownButtonFormField<String>(
+                value: (widget.controller?.text.isNotEmpty ?? false)
+                    ? widget.controller!.text
+                    : null,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  label: Text(widget.label),
+                ),
+                items: widget.dropdownItems
+                    ?.map(
+                      (item) =>
+                          DropdownMenuItem(value: item, child: Text(item)),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (widget.controller != null && value != null) {
+                    widget.controller!.text = value;
+                  }
+                },
+                validator: (value) {
+                  if (widget.required && (value == null || value.isEmpty)) {
+                    return '${widget.label} tidak boleh kosong';
+                  }
+                  return null;
+                },
+              ),
       ],
     );
   }

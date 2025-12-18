@@ -43,8 +43,10 @@ class VerificationResultPage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Spacer(flex: 1),
+              const SizedBox(height: 20),
               // Foto wajah hasil capture dalam bentuk lingkaran
               Container(
                 width: 250,
@@ -148,7 +150,7 @@ class VerificationResultPage extends StatelessWidget {
                   ],
                 ),
               ),
-              const Spacer(flex: 2),
+              const SizedBox(height: 50),
               // Button Deteksi Ulang
               TheBestButtonWidget(
                 color: const Color.fromARGB(255, 56, 92, 221),
