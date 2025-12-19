@@ -91,7 +91,7 @@ class _LoginpageState extends State<Loginpage> {
           } catch (e) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text(e.toString())));
+            ).showSnackBar(SnackBar(content: Text(result['error'])));
           }
           setState(() {
             _isLoading = false;

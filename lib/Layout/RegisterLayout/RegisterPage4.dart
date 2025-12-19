@@ -111,7 +111,6 @@ class _Registerpage4State extends State<Registerpage4> {
       );
 
       if (result.containsKey('error')) {
-        print(result['error']);
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(result['error'])));
