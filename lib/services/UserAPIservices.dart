@@ -101,7 +101,11 @@ class LoginUserAPI {
         );
         return data;
       } else {
-        return {'error': 'Failed to login'};
+        final data = jsonDecode(response.body);
+        if (data['message'] != null) {
+          return {'error': data['message']};
+        }
+        return {'error': 'Failed to login:'};
       }
     } catch (e) {
       return {'error': e.toString()};

@@ -20,6 +20,10 @@ class LoginAdminAPI {
         );
         return data;
       } else {
+        final data = jsonDecode(response.body);
+        if (data['message'] != null) {
+          return {'error': data['message']};
+        }
         return {'error': 'Failed to login'};
       }
     } catch (e) {
