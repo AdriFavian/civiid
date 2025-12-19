@@ -9,6 +9,7 @@ class TextFieldWithLabelWidget extends StatefulWidget {
   final bool required;
   final String? Function(String?)? validator;
   final List<String>? dropdownItems;
+  final int? maxLine;
 
   const TextFieldWithLabelWidget({
     super.key,
@@ -18,6 +19,7 @@ class TextFieldWithLabelWidget extends StatefulWidget {
     this.required = false,
     this.validator,
     this.dropdownItems,
+    this.maxLine,
   });
 
   @override
@@ -93,6 +95,7 @@ class _TextFieldWithLabelWidgetState extends State<TextFieldWithLabelWidget> {
                 obscureText: obscure,
                 readOnly: readOnly,
                 onTap: onTap,
+                maxLines: widget.type == TypeField.text ? widget.maxLine : 1,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
                   if (widget.required && (value == null || value.isEmpty)) {

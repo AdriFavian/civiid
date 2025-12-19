@@ -15,6 +15,7 @@ class SharedPrefServiceRegister {
   static const String keyEmail = 'register_email';
   static const String keyPassword = 'register_password';
   static const String keyPhone = 'register_phone';
+  static const String keyAlasan = 'register_alasan';
 
   Future<void> saveRegisterData({
     String? nik,
@@ -29,6 +30,7 @@ class SharedPrefServiceRegister {
     String? email,
     String? password,
     String? phone,
+    String? alasan_register,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     if (nik != null) await prefs.setString(keyNik, nik);
@@ -46,6 +48,8 @@ class SharedPrefServiceRegister {
     if (email != null) await prefs.setString(keyEmail, email);
     if (password != null) await prefs.setString(keyPassword, password);
     if (phone != null) await prefs.setString(keyPhone, phone);
+    if (alasan_register != null)
+      await prefs.setString(keyAlasan, alasan_register);
   }
 
   Future<Map<String, dynamic>> getRegisterData() async {
@@ -63,6 +67,7 @@ class SharedPrefServiceRegister {
       'email': prefs.getString(keyEmail),
       'password': prefs.getString(keyPassword),
       'phone': prefs.getString(keyPhone),
+      'alasan_register': prefs.getString(keyAlasan),
     };
   }
 
@@ -80,6 +85,7 @@ class SharedPrefServiceRegister {
     await prefs.remove(keyEmail);
     await prefs.remove(keyPassword);
     await prefs.remove(keyPhone);
+    await prefs.remove(keyAlasan);
   }
 }
 

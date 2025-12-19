@@ -35,6 +35,7 @@ class RegisterApi {
     String address,
     int phoneNumber,
     String status,
+    String alasan_register,
     File image,
   ) async {
     try {
@@ -50,6 +51,7 @@ class RegisterApi {
       request.fields['address'] = address;
       request.fields['phone_number'] = phoneNumber.toString();
       request.fields['status'] = status;
+      request.fields['alasan_register'] = alasan_register;
 
       if (await image.exists()) {
         try {

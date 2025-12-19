@@ -106,6 +106,7 @@ class _Registerpage4State extends State<Registerpage4> {
         data['alamat'] ?? '',
         phone,
         data['status_perkawinan'] ?? '',
+        data['alasan_register'] ?? '',
         imageFile ?? File(''),
       );
 

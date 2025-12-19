@@ -16,6 +16,7 @@ class _Registerpage2State extends State<Registerpage2> {
   final TextEditingController _agamaController = TextEditingController();
   final TextEditingController _statusPerkawinanController =
       TextEditingController();
+  final TextEditingController _alasanController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -28,6 +29,7 @@ class _Registerpage2State extends State<Registerpage2> {
         // I need to add it to shared.dart first or use an existing one?
         // Wait, I missed adding phone to shared.dart in step 3.
         phone: _phoneController.text,
+        alasan_register: _alasanController.text,
       );
 
       if (mounted) {
@@ -72,7 +74,7 @@ class _Registerpage2State extends State<Registerpage2> {
                   "Hindu",
                   "Buddha",
                   "Konghucu",
-                  "Lainnya"
+                  "Lainnya",
                 ],
               ),
               SizedBox(height: 15),
@@ -92,6 +94,20 @@ class _Registerpage2State extends State<Registerpage2> {
                 validator: (value) {
                   if (value != null && value.length < 10) {
                     return 'Nomor HP tidak valid';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 15),
+              TextFieldWithLabelWidget(
+                label: "Alasan Pendaftaran",
+                controller: _alasanController,
+                required: true,
+                type: TypeField.text,
+                maxLine: 5,
+                validator: (value) {
+                  if (value != null && value.length < 10) {
+                    return 'Alasan pendaftaran harus minimal 10 karakter';
                   }
                   return null;
                 },

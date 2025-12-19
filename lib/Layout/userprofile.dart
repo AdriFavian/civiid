@@ -1,4 +1,3 @@
-import 'package:civiid/Layout/TheFinalLayout.dart';
 import 'package:civiid/services/AdminAPIservices.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +21,7 @@ class _UserprofileState extends State<Userprofile> {
   String photo_url = '';
   String status = '';
   String tempat_lahir = '';
+  String alasan_register = '';
   bool _isLoading = true;
 
   @override
@@ -58,6 +58,7 @@ class _UserprofileState extends State<Userprofile> {
             photo_url = value['data']['photo_url'] ?? '';
             status = value['data']['status'] ?? '-';
             tempat_lahir = value['data']['tempat_lahir'] ?? '-';
+            alasan_register = value['data']['alasan_register'] ?? '-';
             _isLoading = false;
           });
         } else {
@@ -254,6 +255,7 @@ class _UserprofileState extends State<Userprofile> {
                   ),
                   _buildDetailItem('Status', status),
                   _buildDetailItem('Alamat', address),
+                  _buildDetailItem('Alasan Pendaftaran', alasan_register),
                 ],
               ),
       ),
